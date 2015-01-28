@@ -1,2 +1,3 @@
 # mpd-dsd-019
-DSD specific patches for MPD 0.19
+Placeholder for DSD specific patches for MPD 0.19
+
