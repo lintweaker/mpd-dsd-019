@@ -16,4 +16,6 @@ Patch: 0001-Add-native-DSD-support-to-MPD-0.19.patch
 Patch against MPD 0.19.8 for native DSD support (using DSD_U8 and DSD_U32_BE)
 formats.
 
+Note:
+ALSA 1.0.29 or later, or a patched version of 1.0.27/1.0.28, is required to use the new DSD sample formats.
 
