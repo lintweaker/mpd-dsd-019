@@ -1,6 +1,10 @@
 # mpd-dsd-019
 DSD specific patches for MPD 0.19
 
+[08-mar-16]
+
+New patch against MPD 0.19.13
+
 [11-jan-16]
 
 Patch: 0001-Add-native-DSD-support-to-MPD-0.19.12.patch
