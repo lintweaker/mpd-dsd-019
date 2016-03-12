@@ -1,29 +1,33 @@
-From 57c9e313694e518302a2e54cde6183ee30099e90 Mon Sep 17 00:00:00 2001
+From 9f949c57a9b7db1b9ac3c8ab6dbb9805678f18b1 Mon Sep 17 00:00:00 2001
 From: Jurgen Kramer <gtmkramer@xs4all.nl>
-Date: Tue, 8 Mar 2016 18:10:36 +0100
-Subject: [PATCH] Update MPD native DSD patch to MPD 0.19.13
+Date: Sat, 12 Mar 2016 14:06:14 +0100
+Subject: [PATCH] Updated native DSD patch for MPD 0.19.13
+
+This patch extends native DSD support for MPD 0.19.13 and contains a workaround
+for hangs at the end of certain DSD DFF files.
 
 Signed-off-by: Jurgen Kramer <gtmkramer@xs4all.nl>
 ---
- Makefile.am                             |  5 ++-
- README-DSD                              | 51 ++++++++++++++++++++++
- configure.ac                            |  2 +-
- src/AudioFormat.cxx                     |  4 +-
- src/AudioFormat.hxx                     | 18 +++++++-
- src/decoder/plugins/FlacPcm.cxx         |  4 +-
- src/output/plugins/AlsaOutputPlugin.cxx | 75 +++++++++++++++++++++++++++++++--
- src/output/plugins/OssOutputPlugin.cxx  |  4 +-
- src/pcm/ChannelsConverter.cxx           |  4 +-
- src/pcm/FallbackResampler.cxx           |  6 ++-
- src/pcm/FormatConverter.cxx             |  6 ++-
- src/pcm/PcmDsdNative.cxx                | 69 ++++++++++++++++++++++++++++++
- src/pcm/PcmDsdNative.hxx                | 38 +++++++++++++++++
- src/pcm/PcmExport.cxx                   | 21 ++++++++-
- src/pcm/PcmExport.hxx                   | 21 ++++++++-
- src/pcm/PcmFormat.cxx                   | 10 ++++-
- src/pcm/PcmMix.cxx                      |  6 ++-
- src/pcm/Volume.cxx                      |  6 ++-
- 18 files changed, 329 insertions(+), 21 deletions(-)
+ Makefile.am                                 |  5 +-
+ README-DSD                                  | 51 ++++++++++++++++++++
+ configure.ac                                |  2 +-
+ src/AudioFormat.cxx                         |  4 +-
+ src/AudioFormat.hxx                         | 18 ++++++-
+ src/decoder/plugins/DsdiffDecoderPlugin.cxx | 12 ++++-
+ src/decoder/plugins/FlacPcm.cxx             |  4 +-
+ src/output/plugins/AlsaOutputPlugin.cxx     | 75 +++++++++++++++++++++++++++--
+ src/output/plugins/OssOutputPlugin.cxx      |  4 +-
+ src/pcm/ChannelsConverter.cxx               |  4 +-
+ src/pcm/FallbackResampler.cxx               |  6 ++-
+ src/pcm/FormatConverter.cxx                 |  6 ++-
+ src/pcm/PcmDsdNative.cxx                    | 69 ++++++++++++++++++++++++++
+ src/pcm/PcmDsdNative.hxx                    | 38 +++++++++++++++
+ src/pcm/PcmExport.cxx                       | 21 +++++++-
+ src/pcm/PcmExport.hxx                       | 21 +++++++-
+ src/pcm/PcmFormat.cxx                       | 10 +++-
+ src/pcm/PcmMix.cxx                          |  6 ++-
+ src/pcm/Volume.cxx                          |  6 ++-
+ 19 files changed, 340 insertions(+), 22 deletions(-)
  create mode 100644 README-DSD
  create mode 100644 src/pcm/PcmDsdNative.cxx
  create mode 100644 src/pcm/PcmDsdNative.hxx
@@ -198,6 +202,29 @@ index 0937ab8..a4d330f 100644
  		/* each frame has 8 samples per channel */
  		return 1;
  
+diff --git a/src/decoder/plugins/DsdiffDecoderPlugin.cxx b/src/decoder/plugins/DsdiffDecoderPlugin.cxx
+index b6c79e1..846ff73 100644
+--- a/src/decoder/plugins/DsdiffDecoderPlugin.cxx
++++ b/src/decoder/plugins/DsdiffDecoderPlugin.cxx
+@@ -329,7 +329,17 @@ dsdiff_read_metadata(Decoder *decoder, InputStream &is,
+ 					return false;
+ 		} else if (chunk_header->id.Equals("DSD ")) {
+ 			const offset_type chunk_size = chunk_header->GetSize();
+-			metadata->chunk_size = chunk_size;
++			/**
++			  * Workaround:
++			  * Make sure the DSD sample size is dividable by 4 to
++			  * avoid hangs at the end of the song
++			  */
++			if (chunk_size %4 != 0) {
++				metadata->chunk_size = ( chunk_size /
++					       (metadata->channels * 4 )) * (metadata->channels * 4);
++			} else {
++				metadata->chunk_size = chunk_size;
++			}
+ 			return true;
+ 		} else {
+ 			/* ignore unknown chunk */
 diff --git a/src/decoder/plugins/FlacPcm.cxx b/src/decoder/plugins/FlacPcm.cxx
 index 311500f..3403298 100644
 --- a/src/decoder/plugins/FlacPcm.cxx

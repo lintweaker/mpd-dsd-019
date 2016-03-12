@@ -1,6 +1,12 @@
 # mpd-dsd-019
 DSD specific patches for MPD 0.19
 
+[13-mar-16]
+
+Updated patch for MPD 0.19.13. Contains workaround for hangs with certain DFF
+files.
+
+
 [08-mar-16]
 
 New patch against MPD 0.19.13
