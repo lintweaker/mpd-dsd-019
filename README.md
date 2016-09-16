@@ -1,6 +1,9 @@
 # mpd-dsd-019
 DSD specific patches for MPD 0.19<br>
 <br>
+[16-sep-16]
+Patch for MPD 0.19.19<br>
+<br>
 [31-jul-16]
 Patch for MPD 0.19.17<br>
 <br>
