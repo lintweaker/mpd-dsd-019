@@ -470,7 +470,7 @@ index 8874e1b..5238e1c 100644
  
 diff --git a/src/pcm/PcmDsdNative.cxx b/src/pcm/PcmDsdNative.cxx
 new file mode 100644
-index 0000000..3171123
+index 0000000..49150af
 --- /dev/null
 +++ b/src/pcm/PcmDsdNative.cxx
 @@ -0,0 +1,69 @@
@@ -534,9 +534,9 @@ index 0000000..3171123
 +	for (unsigned i = num_frames / 2; i > 0 ; --i) {
 +
 +		/* Left channel */
-+		*dest++ = pcm_two_dsd_native(src[6], src[4], src[2], src[0]);
++		*dest++ = pcm_two_dsd_native(src[0], src[2], src[4], src[6]);
 +		/* Right channel */
-+		*dest++ = pcm_two_dsd_native(src[7], src[5], src[3], src[1]);
++		*dest++ = pcm_two_dsd_native(src[1], src[3], src[5], src[7]);
 +
 +		src += 8;
 +	}
