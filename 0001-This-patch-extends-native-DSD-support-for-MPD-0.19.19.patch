@@ -243,7 +243,7 @@ index 311500f..3403298 100644
  		gcc_unreachable();
  	}
 diff --git a/src/output/plugins/AlsaOutputPlugin.cxx b/src/output/plugins/AlsaOutputPlugin.cxx
-index 28c374a..55b22ef 100644
+index 28c374a..b3364ef 100644
 --- a/src/output/plugins/AlsaOutputPlugin.cxx
 +++ b/src/output/plugins/AlsaOutputPlugin.cxx
 @@ -1,5 +1,5 @@
@@ -312,7 +312,15 @@ index 28c374a..55b22ef 100644
  	}
  
  	assert(false);
-@@ -643,9 +681,31 @@ alsa_setup_dop(AlsaOutput *ad, const AudioFormat audio_format,
+@@ -297,6 +335,7 @@ byteswap_bitformat(snd_pcm_format_t fmt)
+ 		return SND_PCM_FORMAT_S24_3BE;
+ 
+ 	case SND_PCM_FORMAT_S32_BE: return SND_PCM_FORMAT_S32_LE;
++	case SND_PCM_FORMAT_DSD_U32_BE: return SND_PCM_FORMAT_DSD_U32_LE;
+ 	default: return SND_PCM_FORMAT_UNKNOWN;
+ 	}
+ }
+@@ -643,9 +682,31 @@ alsa_setup_dop(AlsaOutput *ad, const AudioFormat audio_format,
  	assert(ad->dop);
  	assert(audio_format.format == SampleFormat::DSD);
  
@@ -345,7 +353,7 @@ index 28c374a..55b22ef 100644
  	dop_format.format = SampleFormat::S24_P32;
  	dop_format.sample_rate /= 2;
  
-@@ -684,7 +744,13 @@ alsa_setup_or_dop(AlsaOutput *ad, AudioFormat &audio_format,
+@@ -684,7 +745,13 @@ alsa_setup_or_dop(AlsaOutput *ad, AudioFormat &audio_format,
  
  	const bool dop = ad->dop &&
  		audio_format.format == SampleFormat::DSD;
@@ -360,7 +368,7 @@ index 28c374a..55b22ef 100644
  		? alsa_setup_dop(ad, audio_format,
  				 &shift8, &packed, &reverse_endian,
  				 error)
-@@ -695,7 +761,8 @@ alsa_setup_or_dop(AlsaOutput *ad, AudioFormat &audio_format,
+@@ -695,7 +762,8 @@ alsa_setup_or_dop(AlsaOutput *ad, AudioFormat &audio_format,
  
  	ad->pcm_export->Open(audio_format.format,
  			     audio_format.channels,
